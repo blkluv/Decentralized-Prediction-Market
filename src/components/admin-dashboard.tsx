@@ -52,21 +52,33 @@ export function AdminDashboard() {
     contract,
     method:
       "function getMarketInfo(uint256 _marketid) view returns (string _question, string _optionA, string _optionB, uint256 endTime, uint8 outcome, uint256 totalOptionAShares, uint256 totalOptionBShares, bool resolved)",
-    params: selectedMarketId ? [BigInt(selectedMarketId)] : undefined,
+    params: [BigInt(selectedMarketId || 0)],
+    queryOptions: {
+      enabled: Boolean(selectedMarketId),
+    },
   });
 
   const { data: sharesBalance, isPending: isSharesBalancePending } = useReadContract({
     contract,
     method:
       "function getSharesBalance(uint256 _marketId, address _user) view returns (uint256 optionA, uint256 optionB)",
-    params: selectedMarketId && userAddress ? [BigInt(selectedMarketId), userAddress] : undefined,
+    params: [
+      BigInt(selectedMarketId || 0),
+      userAddress || "0x0000000000000000000000000000000000000000",
+    ],
+    queryOptions: {
+      enabled: Boolean(selectedMarketId && userAddress),
+    },
   });
 
   const { data: marketDetails, isPending: isMarketDetailsPending } = useReadContract({
     contract,
     method:
       "function markets(uint256) view returns (string question, uint256 endTime, uint8 outcome, string Option_A, string Option_B, uint256 totaloptionAshares, uint256 totaloptionBshares, bool resolved)",
-    params: selectedMarketId ? [BigInt(selectedMarketId)] : undefined,
+    params: [BigInt(selectedMarketId || 0)],
+    queryOptions: {
+      enabled: Boolean(selectedMarketId),
+    },
   });
 
   // Access control check
@@ -92,7 +104,7 @@ export function AdminDashboard() {
             <Loader2 className="h-8 w-8 animate-spin" />
             <p className="text-lg font-medium">Verifying admin access...</p>
             <p className="text-sm text-muted-foreground text-center">
-              Please ensure you're connected with the contract owner account
+              Please ensure you are connected with the contract owner account
             </p>
           </CardContent>
         </Card>

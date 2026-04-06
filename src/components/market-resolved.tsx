@@ -33,14 +33,20 @@ export function MarketResolved({
                 title: "Claim successful! 🥳",
                 description: "Your rewards have been claimed.",
             });
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error("Claim failed:", error);
     
             // Extract a meaningful message from the error object
+            const errorObject = error as {
+                reason?: string;
+                message?: string;
+                cause?: { reason?: string };
+            };
+
             const reason =
-                error?.reason ||
-                error?.message ||
-                (error?.cause && error.cause.reason) ||
+                errorObject.reason ||
+                errorObject.message ||
+                errorObject.cause?.reason ||
                 "Execution reverted";
     
             // Display a friendly message
